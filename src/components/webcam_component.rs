@@ -12,12 +12,14 @@ pub fn webcam() -> Html {
     let window = window().expect("no global `window` exists");
     let video_ref = use_node_ref();
     let canvas_ref = use_node_ref();
+    let button_ref = use_node_ref();
 
     {
-        // let video_ref = video_ref.clone();
+        let video_ref = video_ref.clone();
         let canvas_ref = canvas_ref.clone();
+        let button_ref = button_ref.clone();
 
-        use_effect_with(video_ref.clone(), move |video_ref| {
+        use_effect(move || {
             // Init media device
             let mut media_constraint = MediaStreamConstraints::new();
             media_constraint.video(&JsValue::TRUE);
@@ -52,7 +54,7 @@ pub fn webcam() -> Html {
             });
 
             // Move data capturing into background
-            spawn_local(async move {
+            let onclick = Closure::<dyn Fn(Event)>::wrap(Box::new(move |_| {
                 let context = canvas
                     .get_context("2d")
                     .unwrap()
@@ -61,17 +63,30 @@ pub fn webcam() -> Html {
                     .unwrap();
                 canvas.set_width(video.video_width());
                 canvas.set_height(video.video_height());
-                context.draw_image_with_html_video_element_and_dw_and_dh(
-                    &video,
-                    0.,
-                    0.,
-                    video.video_width() as f64,
-                    video.video_height() as f64,
-                ).unwrap();
+                context
+                    .draw_image_with_html_video_element_and_dw_and_dh(
+                        &video,
+                        0.,
+                        0.,
+                        video.video_width() as f64,
+                        video.video_height() as f64,
+                    )
+                    .unwrap();
 
                 let data = canvas.to_data_url_with_type("image/png").unwrap();
                 web_sys::console::log_1(&data.into());
-            });
+            }));
+
+            let button = button_ref
+                .cast::<web_sys::HtmlButtonElement>()
+                .expect("button_ref not attached to button element");
+            button.set_onclick(Some(onclick.as_ref().unchecked_ref()));
+
+            move || {
+                button
+                    .remove_event_listener_with_callback("click", onclick.as_ref().unchecked_ref())
+                    .unwrap();
+            }
         });
     }
 
@@ -81,6 +96,7 @@ pub fn webcam() -> Html {
             <video ref={video_ref} autoplay=true />
             <h1> {"Captured video stream"} </h1>
             <canvas ref={canvas_ref} />
+            <button ref={button_ref} > {"take a picture"} </button>
         </div>
     }
 }
