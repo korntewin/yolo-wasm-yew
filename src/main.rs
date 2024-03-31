@@ -1,4 +1,7 @@
+mod components;
+
 use yew::prelude::*;
+use crate::components::webcam_component::Webcam;
 
 #[function_component]
 fn App() -> Html {
@@ -15,6 +18,7 @@ fn App() -> Html {
         <div>
             <button {onclick}>{ "+1" }</button>
             <p>{ *counter }</p>
+            <Webcam />
         </div>
     }
 }
