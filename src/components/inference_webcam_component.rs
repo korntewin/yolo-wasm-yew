@@ -11,9 +11,7 @@ pub fn inference_webcam() -> Html {
     let agent_bridge: UseWorkerBridgeHandle<InferenceAgent> = use_worker_bridge(move |response| {
         web_sys::console::log_1(&format!("agent response: {:?}", &response).into());
     });
-    agent_bridge.send(InferenceAgentMessage {
-        stream_img: stream_img.img.to_owned(),
-    });
+    agent_bridge.send(InferenceAgentMessage::StreamImg(stream_img.img.to_owned()));
     // web_sys::console::log_1(&format!("received stream img: {:?}", &stream_img.img).into());
     web_sys::console::log_1(&format!("agent: {:?}", &agent_sub).into());
 
