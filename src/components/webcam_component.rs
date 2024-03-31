@@ -1,3 +1,5 @@
+use crate::contexts::StreamImgContext;
+use crate::store::SetStreamImgAction;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::JsFuture;
 use web_sys::{
@@ -12,14 +14,13 @@ pub fn webcam() -> Html {
     let window = window().expect("no global `window` exists");
     let video_ref = use_node_ref();
     let canvas_ref = use_node_ref();
-    let button_ref = use_node_ref();
+    let stream_img = use_context::<StreamImgContext>().unwrap();
 
     {
         let video_ref = video_ref.clone();
         let canvas_ref = canvas_ref.clone();
-        let button_ref = button_ref.clone();
 
-        use_effect(move || {
+        use_effect_with((), move |_| {
             // Init media device
             let mut media_constraint = MediaStreamConstraints::new();
             media_constraint.video(&JsValue::TRUE);
@@ -54,7 +55,7 @@ pub fn webcam() -> Html {
             });
 
             // Move data capturing into background
-            let onclick = Closure::<dyn Fn(Event)>::wrap(Box::new(move |_| {
+            let on_interval_handle = Closure::<dyn Fn(Event)>::wrap(Box::new(move |_| {
                 let context = canvas
                     .get_context("2d")
                     .unwrap()
@@ -72,20 +73,23 @@ pub fn webcam() -> Html {
                         video.video_height() as f64,
                     )
                     .unwrap();
+                canvas.set_hidden(false);
+                // canvas.set_hidden(true);
 
                 let data = canvas.to_data_url_with_type("image/png").unwrap();
-                web_sys::console::log_1(&data.into());
+                web_sys::console::log_1(&format!("finished dispatch an image: {:?}", &data).into());
+                stream_img.dispatch(SetStreamImgAction::SetNewImg(data));
             }));
 
-            let button = button_ref
-                .cast::<web_sys::HtmlButtonElement>()
-                .expect("button_ref not attached to button element");
-            button.set_onclick(Some(onclick.as_ref().unchecked_ref()));
+            window
+                .set_interval_with_callback_and_timeout_and_arguments_0(
+                    on_interval_handle.as_ref().unchecked_ref(),
+                    300,
+                )
+                .unwrap();
 
             move || {
-                button
-                    .remove_event_listener_with_callback("click", onclick.as_ref().unchecked_ref())
-                    .unwrap();
+                drop(on_interval_handle);
             }
         });
     }
@@ -96,7 +100,6 @@ pub fn webcam() -> Html {
             <video ref={video_ref} autoplay=true />
             <h1> {"Captured video stream"} </h1>
             <canvas ref={canvas_ref} />
-            <button ref={button_ref} > {"take a picture"} </button>
         </div>
     }
 }
