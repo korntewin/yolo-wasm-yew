@@ -1,6 +1,8 @@
 use crate::agents::InferenceAgent;
 use crate::agents::InferenceAgentMessage;
 use crate::contexts::StreamImgContext;
+use crate::io::download_binary;
+use yew::platform::spawn_local;
 use yew::prelude::*;
 use yew_agent::worker::{use_worker_bridge, UseWorkerBridgeHandle};
 
@@ -18,28 +20,31 @@ pub fn inference_webcam() -> Html {
                 web_sys::console::log_1(&format!("agent response: {:?}", &img).into());
                 annotated_img.set(img);
             }
-            InferenceAgentMessage::InitModel { model_size } => {
-                web_sys::console::log_1(&format!("agent response: {:?}", &model_size).into());
+            InferenceAgentMessage::FinishLoadingModel => {
+                web_sys::console::log_1(&format!("agent response: {:?}", "model loaded").into());
                 is_loaded.set(true);
+            }
+            InferenceAgentMessage::LoadedModel(_) => {
+                //skip as there is no need to do anything for this
             }
         })
     };
-    agent_bridge.send(InferenceAgentMessage::StreamImg(stream_img.img.to_owned()));
+    // agent_bridge.send(InferenceAgentMessage::StreamImg(stream_img.img.to_owned()));
 
-    use_effect({
+    use_effect_with((), move |_| {
+        let model_future = download_binary("n".to_string());
         let agent_bridge = agent_bridge.clone();
-        // agent_bridge.send(InferenceAgentMessage::InitModel {
-        //     model_size: "n".to_string(),
-        // });
-
-        move || {
-            drop(agent_bridge);
-        }
+        spawn_local(async move {
+            web_sys::console::log_1(&"Downloading model data".into());
+            let model = model_future.await;
+            web_sys::console::log_1(&"Finish downloading model data".into());
+            agent_bridge.send(InferenceAgentMessage::LoadedModel(model));
+        });
     });
 
     html! {
         <div>
-            <h1> {"Annotated Image"} </h1>
+            {if *is_loaded {html!{<h1> {"Annotated Image"} </h1>}} else { html! { <h1> {"Loading Yolo model"} </h1> }} }
             <img src={ (*annotated_img).clone() } />
         </div>
     }
