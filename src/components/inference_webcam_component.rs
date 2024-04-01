@@ -1,5 +1,6 @@
 use crate::agents::InferenceAgent;
 use crate::agents::InferenceAgentMessage;
+use crate::config;
 use crate::contexts::StreamImgContext;
 use crate::io::download_binary;
 use yew::platform::spawn_local;
@@ -43,15 +44,15 @@ pub fn inference_webcam() -> Html {
             && stream_img.img != annotated_img_clone.1
             && !*is_processing
         {
-            // Must not send anything if the model isn't finished loading or
-            // if the stream img is empty
+            // Must not send anything if the model isn't finished loading,
+            // if the stream img is empty, or if the model is in processing.
             is_processing.set(true);
             agent_bridge1.send(InferenceAgentMessage::StreamImgWithMetadata {
                 img: stream_img.img.to_owned(),
-                shrink_width: 32. * 6.,
-                shrink_height: 32. * 6.,
-                conf_threshold: 0.2,
-                iou_threshold: 0.4,
+                shrink_width: config::SHRINK_WIDTH,
+                shrink_height: config::SHRINK_HEIGHT,
+                conf_threshold: config::CONF_THRESHOLD,
+                iou_threshold: config::IOU_THRESHOLD,
             });
             web_sys::console::log_1(&format!("Send an image to the model").into());
         } else if *is_processing {
@@ -60,7 +61,7 @@ pub fn inference_webcam() -> Html {
     });
 
     use_effect_with((), move |_| {
-        let model_future = download_binary("n".to_string());
+        let model_future = download_binary(config::MODEL_SIZE.to_string());
         let agent_bridge = agent_bridge.clone();
         spawn_local(async move {
             web_sys::console::log_1(&"Downloading model data".into());

@@ -1,6 +1,7 @@
 pub mod agents;
 mod coco_classes;
 pub mod components;
+mod config;
 pub mod contexts;
 mod io;
 pub mod store;
