@@ -21,20 +21,10 @@ use yolov8_model::YoloV8;
 
 #[function_component]
 pub fn App() -> Html {
-    let counter = use_state(|| 0);
-    let onclick = {
-        let counter = counter.clone();
-        move |_| {
-            let value = *counter + 1;
-            counter.set(value);
-        }
-    };
     let stream_img = use_reducer(StreamImgState::default);
 
     html! {
         <div>
-            <button {onclick}>{ "+1" }</button>
-            <p>{ *counter }</p>
             <WorkerProvider<InferenceAgent> path="/worker.js">
                 <ContextProvider<StreamImgContext> context={stream_img}>
                     <Webcam />
