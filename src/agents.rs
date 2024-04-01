@@ -43,6 +43,7 @@ impl Worker for InferenceAgent {
             } => {
                 web_sys::console::log_1(&format!("agent received stream img: {:?}", &img).into());
                 if let Some(mdl) = &self.model {
+                    web_sys::console::time();
                     let annotated_img = detect_object(
                         img,
                         shrink_width,
@@ -51,6 +52,7 @@ impl Worker for InferenceAgent {
                         iou_threshold,
                         mdl,
                     );
+                    web_sys::console::time_end();
                     scope.respond(id, InferenceAgentMessage::StreamImg(annotated_img));
                 } else {
                     web_sys::console::log_1(&format!("Model is not loaded yet").into());

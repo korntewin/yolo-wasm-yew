@@ -30,7 +30,9 @@ pub fn inference_webcam() -> Html {
         })
     };
 
-    if *is_loaded {
+    if *is_loaded && stream_img.img != "data:," {
+        // Must not send anything if the model isn't finished loading or
+        // if the stream img is empty
         agent_bridge.send(InferenceAgentMessage::StreamImgWithMetadata {
             img: stream_img.img.to_owned(),
             shrink_width: 32. * 6.,

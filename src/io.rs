@@ -43,18 +43,6 @@ pub async fn download_binary(model_size: String) -> ModelData {
     }
 }
 
-pub async fn get_model(model_size: String) -> YoloV8 {
-    let model_data = download_binary(model_size.clone()).await;
-    // let device = Device::Cpu;
-    let device = Device::new_cuda(0).unwrap_or(Device::Cpu);
-    let vb =
-        VarBuilder::from_buffered_safetensors(model_data.weights, DType::F32, &device).unwrap();
-    let model = YoloV8::load(vb, model_multiplier(&model_size), 80).unwrap();
-    web_sys::console::log_1(&format!("Model loaded: {:?}", &model).into());
-    web_sys::console::log_1(&format!("Model size: {:?}", model_size).into());
-    model
-}
-
 pub fn load_model_from_data(model_data: ModelData) -> YoloV8 {
     let device = Device::new_cuda(0).unwrap_or(Device::Cpu);
     let vb =

@@ -13,7 +13,7 @@ pub struct StreamImgState {
 impl Default for StreamImgState {
     fn default() -> Self {
         Self {
-            img: "<empty>".to_string(),
+            img: "data:,".to_string(),
         }
     }
 }
