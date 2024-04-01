@@ -11,7 +11,7 @@ pub struct InferenceAgent {
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub enum InferenceAgentMessage {
-    StreamImg(String),
+    StreamImg(String, String),
     StreamImgWithMetadata {
         img: String,
         shrink_width: f32,
@@ -41,11 +41,13 @@ impl Worker for InferenceAgent {
                 conf_threshold,
                 iou_threshold,
             } => {
-                web_sys::console::log_1(&format!("agent received stream img: {:?}", &img).into());
+                web_sys::console::log_1(
+                    &format!("agent received stream img with id: {:?}", &id).into(),
+                );
                 if let Some(mdl) = &self.model {
                     web_sys::console::time();
                     let annotated_img = detect_object(
-                        img,
+                        &img,
                         shrink_width,
                         shrink_height,
                         conf_threshold,
@@ -53,7 +55,7 @@ impl Worker for InferenceAgent {
                         mdl,
                     );
                     web_sys::console::time_end();
-                    scope.respond(id, InferenceAgentMessage::StreamImg(annotated_img));
+                    scope.respond(id, InferenceAgentMessage::StreamImg(annotated_img, img));
                 } else {
                     web_sys::console::log_1(&format!("Model is not loaded yet").into());
                 }

@@ -9,16 +9,16 @@ use yew_agent::worker::{use_worker_bridge, UseWorkerBridgeHandle};
 #[function_component(InferenceWebcam)]
 pub fn inference_webcam() -> Html {
     let is_loaded = use_state(|| false);
-    let annotated_img = use_state_eq(|| "".to_string());
+    let annotated_img = use_state_eq(|| ("".to_string(), "".to_string()));
 
     let stream_img = use_context::<StreamImgContext>().unwrap();
     let agent_bridge: UseWorkerBridgeHandle<InferenceAgent> = {
         let is_loaded = is_loaded.clone();
         let annotated_img = annotated_img.clone();
         use_worker_bridge(move |response| match response {
-            InferenceAgentMessage::StreamImg(img) => {
+            InferenceAgentMessage::StreamImg(mdl_annot_img, source_img) => {
                 web_sys::console::log_1(&format!("Agent finished annotating an image").into());
-                annotated_img.set(img);
+                annotated_img.set((mdl_annot_img, source_img));
             }
             InferenceAgentMessage::FinishLoadingModel => {
                 web_sys::console::log_1(&format!("Agent finished loading the model").into());
@@ -32,9 +32,10 @@ pub fn inference_webcam() -> Html {
 
     let agent_bridge1 = agent_bridge.clone();
     let is_loaded1 = is_loaded.clone();
+    let annotated_img_clone = annotated_img.clone();
 
     use_effect(move || {
-        if *is_loaded1 && stream_img.img != "data:," {
+        if *is_loaded1 && stream_img.img != "data:," && stream_img.img != annotated_img_clone.1 {
             // Must not send anything if the model isn't finished loading or
             // if the stream img is empty
             agent_bridge1.send(InferenceAgentMessage::StreamImgWithMetadata {
@@ -62,7 +63,7 @@ pub fn inference_webcam() -> Html {
     html! {
         <div>
             {if *is_loaded {html!{<h1> {"Annotated Image"} </h1>}} else { html! { <h1> {"Loading Yolo model"} </h1> }} }
-            <img src={ (*annotated_img).clone() } />
+            <img src={ (*annotated_img).0.clone() } />
         </div>
     }
 }

@@ -37,7 +37,7 @@ pub fn get_dyn_image(img: &str) -> ImageResult<DynamicImage> {
     dynimg
 }
 
-pub fn transform_image(img: String, shrink_width: f32, shrink_height: f32) -> Option<Tensor> {
+pub fn transform_image(img: &str, shrink_width: f32, shrink_height: f32) -> Option<Tensor> {
     let device = Device::new_cuda(0).unwrap_or(Device::Cpu);
     web_sys::console::log_1(&format!("Device: {:?}", device).into());
     // let dynimg =

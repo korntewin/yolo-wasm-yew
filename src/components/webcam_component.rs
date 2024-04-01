@@ -77,16 +77,14 @@ pub fn webcam() -> Html {
                 // canvas.set_hidden(true);
 
                 let data = canvas.to_data_url_with_type("image/png").unwrap();
-                web_sys::console::debug_1(
-                    &format!("finished dispatch an image: {:?}", &data).into(),
-                );
+                web_sys::console::debug_1(&format!("finished dispatch an image").into());
                 stream_img.dispatch(SetStreamImgAction::SetNewImg(data));
             }));
 
             window
                 .set_interval_with_callback_and_timeout_and_arguments_0(
                     on_interval_handle.as_ref().unchecked_ref(),
-                    150,
+                    500,
                 )
                 .unwrap();
 
