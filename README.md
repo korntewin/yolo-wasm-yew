@@ -32,8 +32,8 @@ Below is the simple architecture for this web application:
 4. HTML, Javascript, and WASM will be rendered at users' browser for real time Object Detection with the following as a main components:  
     4.1 **Candle** ML Framework in *Rust* compiled to **WebAssembly** as a main inference engine  
     4.2 **Yolo v8** as the main Obeject Detection Model  
-    4.2 **React** as a main rendering UI  
-    4.3 **react-webcam** for streaming video frame from webcam
+    4.2 **Yew** as a main UI framework on pure Rust!  
+    4.3 **web-sys** for streaming video frame from webcam
 
 ![architecture](./imgs/architecture.png)
 
