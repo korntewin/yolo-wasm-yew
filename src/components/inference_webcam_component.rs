@@ -17,19 +17,29 @@ pub fn inference_webcam() -> Html {
         let annotated_img = annotated_img.clone();
         use_worker_bridge(move |response| match response {
             InferenceAgentMessage::StreamImg(img) => {
-                web_sys::console::log_1(&format!("agent response: {:?}", &img).into());
+                web_sys::console::log_1(&format!("Agent finished annotating an image").into());
                 annotated_img.set(img);
             }
             InferenceAgentMessage::FinishLoadingModel => {
-                web_sys::console::log_1(&format!("agent response: {:?}", "model loaded").into());
+                web_sys::console::log_1(&format!("Agent finished loading the model").into());
                 is_loaded.set(true);
             }
-            InferenceAgentMessage::LoadedModel(_) => {
+            _ => {
                 //skip as there is no need to do anything for this
             }
         })
     };
-    // agent_bridge.send(InferenceAgentMessage::StreamImg(stream_img.img.to_owned()));
+
+    if *is_loaded {
+        agent_bridge.send(InferenceAgentMessage::StreamImgWithMetadata {
+            img: stream_img.img.to_owned(),
+            shrink_width: 32. * 6.,
+            shrink_height: 32. * 6.,
+            conf_threshold: 0.2,
+            iou_threshold: 0.4,
+        });
+        web_sys::console::log_1(&format!("Send an image to the model").into());
+    };
 
     use_effect_with((), move |_| {
         let model_future = download_binary("n".to_string());
