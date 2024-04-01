@@ -54,7 +54,6 @@ pub fn detect_object(
 ) -> String {
     let orig_img = get_dyn_image(&img).unwrap();
     let img = transform_image(img, shrink_width, shrink_height).unwrap();
-    web_sys::console::log_1(&format!("Finished locking the model").into());
 
     web_sys::console::log_1(&format!("Before model forwarding").into());
     let pred = model.forward(&img).unwrap().squeeze(0).unwrap();

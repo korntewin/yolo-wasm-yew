@@ -86,7 +86,7 @@ pub fn webcam() -> Html {
             window
                 .set_interval_with_callback_and_timeout_and_arguments_0(
                     on_interval_handle.as_ref().unchecked_ref(),
-                    1000,
+                    150,
                 )
                 .unwrap();
 

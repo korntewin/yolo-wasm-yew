@@ -9,7 +9,7 @@ use yew_agent::worker::{use_worker_bridge, UseWorkerBridgeHandle};
 #[function_component(InferenceWebcam)]
 pub fn inference_webcam() -> Html {
     let is_loaded = use_state(|| false);
-    let annotated_img = use_state(|| "".to_string());
+    let annotated_img = use_state_eq(|| "".to_string());
 
     let stream_img = use_context::<StreamImgContext>().unwrap();
     let agent_bridge: UseWorkerBridgeHandle<InferenceAgent> = {
@@ -30,18 +30,23 @@ pub fn inference_webcam() -> Html {
         })
     };
 
-    if *is_loaded && stream_img.img != "data:," {
-        // Must not send anything if the model isn't finished loading or
-        // if the stream img is empty
-        agent_bridge.send(InferenceAgentMessage::StreamImgWithMetadata {
-            img: stream_img.img.to_owned(),
-            shrink_width: 32. * 6.,
-            shrink_height: 32. * 6.,
-            conf_threshold: 0.2,
-            iou_threshold: 0.4,
-        });
-        web_sys::console::log_1(&format!("Send an image to the model").into());
-    };
+    let agent_bridge1 = agent_bridge.clone();
+    let is_loaded1 = is_loaded.clone();
+
+    use_effect(move || {
+        if *is_loaded1 && stream_img.img != "data:," {
+            // Must not send anything if the model isn't finished loading or
+            // if the stream img is empty
+            agent_bridge1.send(InferenceAgentMessage::StreamImgWithMetadata {
+                img: stream_img.img.to_owned(),
+                shrink_width: 32. * 6.,
+                shrink_height: 32. * 6.,
+                conf_threshold: 0.2,
+                iou_threshold: 0.4,
+            });
+            web_sys::console::log_1(&format!("Send an image to the model").into());
+        };
+    });
 
     use_effect_with((), move |_| {
         let model_future = download_binary("n".to_string());
