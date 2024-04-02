@@ -107,8 +107,8 @@ pub fn webcam() -> Html {
                          flex-direction: column;
                          padding: 1em;
                          ")}>
-            <h1 class={css!("text-align: center;")}>{"Original Video Stream"}</h1>
-            <video ref={video_ref} autoplay=true />
+            <h3 class={css!("text-align: center;")}>{"Original Video Stream"}</h3>
+            <video ref={video_ref} autoplay=true class={css!("width: auto; max-width: 100%; height: auto;")}/>
             <canvas ref={canvas_ref} />
         </div>
     }

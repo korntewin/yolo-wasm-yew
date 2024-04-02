@@ -12,6 +12,9 @@ use agents::InferenceAgent;
 use candle_core::Module;
 use components::inference_webcam_component::InferenceWebcam;
 use components::webcam_component::Webcam;
+use components::logos::yewlogo::YewLogo;
+use components::logos::linkedin_logo::LinkedInLogo;
+use components::logos::github_logo::GithubLogo;
 use contexts::StreamImgContext;
 use store::StreamImgState;
 use stylist::yew::styled_component;
@@ -27,21 +30,63 @@ pub fn App() -> Html {
     html! {
         <div class={css!("
         background-color: #282c34;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        font-size: calc(10px + 2vmin);
+        height: 120%;
+        min-height: 120vh;
         color: white;
         margin: 0;
+        font-size: calc(10px + 1vmin);
+        padding: 0;
+        align-items: center;
+        text-align: center;
         ")}>
-            <WorkerProvider<InferenceAgent> path="/worker.js">
-                <ContextProvider<StreamImgContext> context={stream_img}>
-                    <Webcam />
-                    <InferenceWebcam />
-                </ContextProvider<StreamImgContext>>
-            </WorkerProvider<InferenceAgent>>
+            <h1> {"Real-time object detection with YoloV8"} </h1>
+            <h2> {"Built using Yew and WebAssembly in Rust!"} </h2>
+
+            // Diplay logo
+            <div class={css!("
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                             ")}>
+                <img
+                    height="120px"
+                    src={"https://github.com/carlosbaraza/web-assembly-logo/blob/master/dist/icon/web-assembly-icon-white-512px.png?raw=true"}
+                />
+                <YewLogo/>
+                <img
+                    src={"https://assets-global.website-files.com/646dd1f1a3703e451ba81ecc/64994922cf2a6385a4bf4489_UltralyticsYOLO_mark_blue.svg"}
+                    height="120px"
+                />
+            </div>
+
+            // Main webcam components
+            <div class={css!("
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            ")}>
+                <WorkerProvider<InferenceAgent> path="/worker.js">
+                    <ContextProvider<StreamImgContext> context={stream_img}>
+                        <Webcam />
+                        <InferenceWebcam />
+                    </ContextProvider<StreamImgContext>>
+                </WorkerProvider<InferenceAgent>>
+            </div>
+            
+            // Footer components
+            <div class={css!("
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            ")}>
+                <div> {"Please follow me on: "} </div>
+                <LinkedInLogo />
+                <GithubLogo />
+            </div>
         </div>
     }
 }

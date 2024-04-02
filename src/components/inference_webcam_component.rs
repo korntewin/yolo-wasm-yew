@@ -88,14 +88,15 @@ pub fn inference_webcam() -> Html {
                          ")}>
             {
                 if *is_loaded
-                    {html!{<h1 class={css!("text-align: center;")}> {"Annotated Image"} </h1>}}
+                    {html!{<h3 class={css!("text-align: center;")}> {"Annotated Image"} </h3>}}
                 else
-                { html! { <h1 class={css!("text-align: center;")}> {"Loading Yolo model"} </h1> }}
+                { html! { <h3 class={css!("text-align: center;")}> {"Loading Yolo model"} </h3> }}
             }
             <img
                 src={ (*annotated_img).0.clone() }
                 width={orig_width.to_string()}
                 height={orig_height.to_string()}
+                class={css!("width: auto; max-width: 100%; height: auto;")}
             />
         </div>
     }
