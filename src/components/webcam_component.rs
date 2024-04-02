@@ -79,7 +79,11 @@ pub fn webcam() -> Html {
 
                 let data = canvas.to_data_url_with_type("image/png").unwrap();
                 web_sys::console::debug_1(&format!("finished dispatch an image").into());
-                stream_img.dispatch(SetStreamImgAction::SetNewImg(data));
+                stream_img.dispatch(SetStreamImgAction::SetNewImg(
+                    data,
+                    video.video_width(),
+                    video.video_height(),
+                ));
             }));
 
             window

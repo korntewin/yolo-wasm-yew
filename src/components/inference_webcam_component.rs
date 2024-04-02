@@ -38,6 +38,10 @@ pub fn inference_webcam() -> Html {
     let agent_bridge1 = agent_bridge.clone();
     let is_loaded1 = is_loaded.clone();
     let annotated_img_clone = annotated_img.clone();
+    let orig_width = stream_img.width;
+    let orig_height = stream_img.height;
+    web_sys::console::log_1(&format!("original width: {:?}", orig_width).into());
+    web_sys::console::log_1(&format!("original height: {:?}", orig_height).into());
 
     use_effect(move || {
         if *is_loaded1
@@ -88,7 +92,11 @@ pub fn inference_webcam() -> Html {
                 else
                 { html! { <h1 class={css!("text-align: center;")}> {"Loading Yolo model"} </h1> }}
             }
-            <img src={ (*annotated_img).0.clone() } />
+            <img
+                src={ (*annotated_img).0.clone() }
+                width={orig_width.to_string()}
+                height={orig_height.to_string()}
+            />
         </div>
     }
 }
