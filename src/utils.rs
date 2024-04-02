@@ -39,9 +39,7 @@ pub fn get_dyn_image(img: &str) -> ImageResult<DynamicImage> {
 
 pub fn transform_image(img: &str, shrink_width: f32, shrink_height: f32) -> Option<Tensor> {
     let device = Device::new_cuda(0).unwrap_or(Device::Cpu);
-    web_sys::console::log_1(&format!("Device: {:?}", device).into());
-    // let dynimg =
-    //     ImageBuffer::<Rgba<u8>, _>::from_vec(width, height, img).map(DynamicImage::ImageRgba8);
+    web_sys::console::debug_1(&format!("Device: {:?}", device).into());
     let dynimg = get_dyn_image(&img);
 
     if let Ok(original_image) = dynimg {
@@ -103,7 +101,7 @@ pub fn identify_bboxes(
                 confidence: max_conf,
                 keypoints: vec![],
             };
-            web_sys::console::log_1(&format!("Found {}", COCOE_CLASS_NAMES[class_idx]).into());
+            web_sys::console::debug_1(&format!("Found {}", COCOE_CLASS_NAMES[class_idx]).into());
             bboxes[class_idx].push(bbox);
         }
     }
@@ -128,7 +126,9 @@ pub fn annotate_images(
     let font = rusttype::Font::try_from_vec(font);
     for (class_index, bboxes_for_class) in bboxes.iter().enumerate() {
         for b in bboxes_for_class.iter() {
-            web_sys::console::log_1(&format!("{}: {:?}", COCOE_CLASS_NAMES[class_index], b).into());
+            web_sys::console::debug_1(
+                &format!("{}: {:?}", COCOE_CLASS_NAMES[class_index], b).into(),
+            );
             let xmin = (b.xmin * w_ratio) as i32;
             let ymin = (b.ymin * h_ratio) as i32;
             let dx = (b.xmax - b.xmin) * w_ratio;

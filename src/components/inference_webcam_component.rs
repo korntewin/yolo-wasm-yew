@@ -20,7 +20,7 @@ pub fn inference_webcam() -> Html {
         let is_processing = is_processing.clone();
         use_worker_bridge(move |response| match response {
             InferenceAgentMessage::StreamImg(mdl_annot_img, source_img) => {
-                web_sys::console::log_1(&format!("Agent finished annotating an image").into());
+                web_sys::console::debug_1(&format!("Agent finished annotating an image").into());
                 annotated_img.set((mdl_annot_img, source_img));
                 is_processing.set(false);
             }
@@ -54,9 +54,11 @@ pub fn inference_webcam() -> Html {
                 conf_threshold: config::CONF_THRESHOLD,
                 iou_threshold: config::IOU_THRESHOLD,
             });
-            web_sys::console::log_1(&format!("Send an image to the model").into());
+            web_sys::console::debug_1(&format!("Send an image to the model").into());
         } else if *is_processing {
-            web_sys::console::log_1(&format!("Model is processing").into());
+            web_sys::console::debug_1(
+                &format!("Model is processing, skip sending an image").into(),
+            );
         };
     });
 

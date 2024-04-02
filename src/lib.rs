@@ -46,11 +46,11 @@ pub fn detect_object(
     let orig_img = get_dyn_image(&img).unwrap();
     let img = transform_image(&img, shrink_width, shrink_height).unwrap();
 
-    web_sys::console::log_1(&format!("Before model forwarding").into());
+    web_sys::console::debug_1(&format!("Before model forwarding").into());
     let pred = model.forward(&img).unwrap().squeeze(0).unwrap();
     let bboxes = identify_bboxes(&pred, conf_threshold, iou_threshold);
     let annotated_img =
         annotate_images(orig_img, shrink_width, shrink_height, &bboxes.unwrap()).unwrap();
-    web_sys::console::log_1(&format!("After annotate image").into());
+    web_sys::console::debug_1(&format!("After annotate image").into());
     return img_to_base64(annotated_img).unwrap();
 }

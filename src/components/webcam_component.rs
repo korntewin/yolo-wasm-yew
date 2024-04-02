@@ -52,7 +52,7 @@ pub fn webcam() -> Html {
                 let stream = user_media_futures.await.unwrap();
                 let stream = MediaStream::from(stream);
                 video_1.set_src_object(Some(&stream));
-                web_sys::console::log_1(&stream.into());
+                web_sys::console::log_1(&format!("Finished setup streaming: {:?}", &stream).into());
             });
 
             // Move data capturing into background
@@ -74,8 +74,7 @@ pub fn webcam() -> Html {
                         video.video_height() as f64,
                     )
                     .unwrap();
-                canvas.set_hidden(false);
-                // canvas.set_hidden(true);
+                canvas.set_hidden(true);
 
                 let data = canvas.to_data_url_with_type("image/png").unwrap();
                 web_sys::console::debug_1(&format!("finished dispatch an image").into());
@@ -99,7 +98,6 @@ pub fn webcam() -> Html {
         <div>
             <h1>{"Original Video Stream"}</h1>
             <video ref={video_ref} autoplay=true />
-            <h1> {"Captured video stream"} </h1>
             <canvas ref={canvas_ref} />
         </div>
     }

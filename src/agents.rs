@@ -41,8 +41,8 @@ impl Worker for InferenceAgent {
                 conf_threshold,
                 iou_threshold,
             } => {
-                web_sys::console::log_1(
-                    &format!("agent received stream img with id: {:?}", &id).into(),
+                web_sys::console::debug_1(
+                    &format!("Agent received stream img with id: {:?}", &id).into(),
                 );
                 if let Some(mdl) = &self.model {
                     web_sys::console::time();
@@ -57,7 +57,7 @@ impl Worker for InferenceAgent {
                     web_sys::console::time_end();
                     scope.respond(id, InferenceAgentMessage::StreamImg(annotated_img, img));
                 } else {
-                    web_sys::console::log_1(&format!("Model is not loaded yet").into());
+                    web_sys::console::debug_1(&format!("Model is not loaded yet").into());
                 }
             }
             InferenceAgentMessage::LoadedModel(model_data) => {
