@@ -3,11 +3,12 @@ use crate::agents::InferenceAgentMessage;
 use crate::config;
 use crate::contexts::StreamImgContext;
 use crate::io::download_binary;
+use stylist::yew::styled_component;
 use yew::platform::spawn_local;
 use yew::prelude::*;
 use yew_agent::worker::{use_worker_bridge, UseWorkerBridgeHandle};
 
-#[function_component(InferenceWebcam)]
+#[styled_component(InferenceWebcam)]
 pub fn inference_webcam() -> Html {
     let is_loaded = use_state(|| false);
     let is_processing = use_state(|| false);
@@ -74,8 +75,19 @@ pub fn inference_webcam() -> Html {
     });
 
     html! {
-        <div>
-            {if *is_loaded {html!{<h1> {"Annotated Image"} </h1>}} else { html! { <h1> {"Loading Yolo model"} </h1> }} }
+        <div class={css!("
+                         justify-content: center;
+                         align-tiems: center;
+                         display: flex;
+                         flex-direction: column;
+                         padding: 1em;
+                         ")}>
+            {
+                if *is_loaded
+                    {html!{<h1 class={css!("text-align: center;")}> {"Annotated Image"} </h1>}}
+                else
+                { html! { <h1 class={css!("text-align: center;")}> {"Loading Yolo model"} </h1> }}
+            }
             <img src={ (*annotated_img).0.clone() } />
         </div>
     }

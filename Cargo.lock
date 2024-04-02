@@ -1833,6 +1833,7 @@ dependencies = [
  "stylist-macros",
  "wasm-bindgen",
  "web-sys",
+ "yew",
 ]
 
 [[package]]

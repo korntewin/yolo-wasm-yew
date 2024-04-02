@@ -1,6 +1,7 @@
 use crate::config;
 use crate::contexts::StreamImgContext;
 use crate::store::SetStreamImgAction;
+use stylist::yew::styled_component;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::JsFuture;
 use web_sys::{
@@ -10,7 +11,7 @@ use web_sys::{
 use yew::platform::spawn_local;
 use yew::prelude::*;
 
-#[function_component(Webcam)]
+#[styled_component(Webcam)]
 pub fn webcam() -> Html {
     let window = window().expect("no global `window` exists");
     let video_ref = use_node_ref();
@@ -95,8 +96,14 @@ pub fn webcam() -> Html {
     }
 
     html! {
-        <div>
-            <h1>{"Original Video Stream"}</h1>
+        <div class={css!("
+                         justify-content: center;
+                         align-tiems: center;
+                         display: flex;
+                         flex-direction: column;
+                         padding: 1em;
+                         ")}>
+            <h1 class={css!("text-align: center;")}>{"Original Video Stream"}</h1>
             <video ref={video_ref} autoplay=true />
             <canvas ref={canvas_ref} />
         </div>

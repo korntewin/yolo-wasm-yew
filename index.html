@@ -9,16 +9,33 @@
 
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Yew • Web Worker Prime</title>
 
-<head>
-  <meta charset="utf-8">
-  <title>Yew • Web Worker Prime</title>
+    <link
+      data-trunk
+      rel="rust"
+      href="Cargo.toml"
+      data-bin="app"
+      data-type="main"
+      data-weak-refs
+    />
+    <link
+      data-trunk
+      rel="rust"
+      href="Cargo.toml"
+      data-bin="worker"
+      data-type="worker"
+      data-weak-refs
+    />
+  </head>
 
-  <link data-trunk rel="rust" href="Cargo.toml" data-bin="app" data-type="main" data-weak-refs />
-  <link data-trunk rel="rust" href="Cargo.toml" data-bin="worker" data-type="worker" data-weak-refs />
-</head>
-
-<body>
-</body>
-
+  <body
+    style="
+      margin: 0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    "
+  ></body>
 </html>

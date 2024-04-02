@@ -14,17 +14,28 @@ use components::inference_webcam_component::InferenceWebcam;
 use components::webcam_component::Webcam;
 use contexts::StreamImgContext;
 use store::StreamImgState;
+use stylist::yew::styled_component;
 use utils::{annotate_images, get_dyn_image, identify_bboxes, img_to_base64, transform_image};
 use yew::prelude::*;
 use yew_agent::worker::WorkerProvider;
 use yolov8_model::YoloV8;
 
-#[function_component]
+#[styled_component]
 pub fn App() -> Html {
     let stream_img = use_reducer(StreamImgState::default);
 
     html! {
-        <div>
+        <div class={css!("
+        background-color: #282c34;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        font-size: calc(10px + 2vmin);
+        color: white;
+        margin: 0;
+        ")}>
             <WorkerProvider<InferenceAgent> path="/worker.js">
                 <ContextProvider<StreamImgContext> context={stream_img}>
                     <Webcam />
