@@ -1,7 +1,10 @@
 # 🚀 Overview
 
 >🔥 Simple Web application for YOLOv8 Object Detection using **Pure Rust! which are Yew & WebAssembly**!  
+
 > 🧑‍💻 This repository is a clone of my another project based on *React + Rust's Webassembly: [yolo-wasm](github.com/korntewin/yolo-wasm)*.
+
+> 🔖 For live-demo please visit [this link](https://yolo-yew.crypto-bot-gcp.trade/)! It will be the most performance on firefox.
 
 The web application is run & rendered purely on client-side 🖥️ without transferring any data out to the public internet, so no need to worry!
 
